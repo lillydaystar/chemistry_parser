@@ -1,0 +1,1 @@
+element = { ASCII_ALPHA_UPPER ~ ASCII_ALPHA_LOWER? }
