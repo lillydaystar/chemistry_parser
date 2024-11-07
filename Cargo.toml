@@ -6,6 +6,7 @@ license = "MIT"
 description = "A parser for the analysis of chemical elements, formulas and equations. This parser is designed to automate the processing of chemical formulas and equations, providing structured information about each element in the formula, as well as the ability to recognize and check the correctness of chemical equations."
 
 [dependencies]
+anyhow = "1.0.93"
 csv = "1.3.0"
 pest = "2.7.14"
 pest_derive = "2.7.14"
