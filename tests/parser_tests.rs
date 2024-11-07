@@ -1,5 +1,5 @@
-use pest::Parser;
 use chemistry_parser::{ChemParser, Rule};
+use pest::Parser;
 
 #[test]
 fn test_successful_element_parse() {
@@ -62,7 +62,6 @@ fn test_correct_formula_parse() {
     assert_eq!(elem3.as_str(), "O");
 }
 
-
 #[test]
 fn test_invalid_formula() {
     assert!(ChemParser::parse(Rule::formula, "2O2").is_err());
@@ -93,7 +92,6 @@ fn test_successful_equation_parse() {
     assert!(ChemParser::parse(Rule::equation, "2H2 + O2 -> 2H2O").is_ok());
     assert!(ChemParser::parse(Rule::equation, "2HCl + 2Na -> 2NaCl + H2").is_ok());
 }
-
 
 #[test]
 fn test_unsuccessful_equation_parse() {
