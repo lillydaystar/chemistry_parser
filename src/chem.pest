@@ -1,1 +1,12 @@
 element = { ASCII_ALPHA_UPPER ~ ASCII_ALPHA_LOWER? }
+index = { ASCII_DIGIT+ }
+
+formula = { ((element ~ index?) | group)+ }
+group = { "(" ~ formula ~ ")" ~ index? }
+
+equation = { reactants ~ WS? ~ "->" ~ WS? ~ products }
+reactants = { coefficient? ~ formula ~ (WS? ~ "+" ~ WS? ~ coefficient? ~ formula)* }
+products = { coefficient? ~ formula ~ (WS? ~ "+" ~ WS? ~ coefficient? ~ formula)* }
+coefficient = { ASCII_DIGIT+ }
+
+WS = _{ " " }
