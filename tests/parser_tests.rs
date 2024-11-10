@@ -1,5 +1,5 @@
-use chemistry_parser::{ChemParser, Rule};
 use pest::Parser;
+use chemistry_parser::{ChemParser, Rule};
 
 #[test]
 fn test_successful_element_parse() {

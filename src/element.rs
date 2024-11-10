@@ -14,6 +14,63 @@ pub struct Element {
     pub boiling_point: Option<f64>,
 }
 
+#[derive(Debug, Clone)]
+pub struct Formula {
+    pub formula: String,
+    pub elements: HashMap<String, u8>,
+    pub mass: f64,
+}
+
+impl Formula {
+    pub fn new(formula_str: &str) -> Self {
+        Formula {
+            formula: formula_str.to_string(),
+            elements: HashMap::new(),
+            mass: 0.0,
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct Equation {
+    equation: String,
+    reactants: HashMap<String, u8>,
+    products: HashMap<String, u8>,
+    reactants_formulas: HashMap<String, Formula>,
+    products_formulas: HashMap<String, Formula>,
+}
+
+impl Equation {
+    pub fn new(equation: String, reactants: HashMap<String, u8>, products: HashMap<String, u8>,
+               reactants_formulas: HashMap<String, Formula>, products_formulas: HashMap<String, Formula>) -> Self {
+        Equation {
+            equation,
+            reactants,
+            products,
+            reactants_formulas,
+            products_formulas,
+        }
+    }
+
+    pub fn check_equation(&self) -> bool {
+        let reactant_mass: f64 = self.reactants.iter().map(|(form, coefficient)| (*coefficient as f64) * self.reactants_formulas[form].mass).sum();
+        let product_mass: f64 = self.products.iter().map(|(form, coefficient)| (*coefficient as f64) * self.products_formulas[form].mass).sum();
+
+        (reactant_mass - product_mass).abs() < f64::EPSILON
+    }
+
+    pub fn solve_equation(self) -> Equation {
+        let mut result = self.clone();
+
+        if self.check_equation() {
+            return result;
+        }
+        // TODO: Define algorithm for solving chemical equations
+
+        result
+    }
+}
+
 pub struct PeriodicTable {
     elements: HashMap<String, Element>,
 }
