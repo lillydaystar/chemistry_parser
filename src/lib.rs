@@ -1,10 +1,10 @@
 pub mod element;
 
-use std::collections::HashMap;
+use crate::element::{Element, Equation, Formula, PeriodicTable};
 use pest::iterators::Pair;
 use pest::Parser;
 use pest_derive::Parser;
-use crate::element::{Element, Equation, Formula, PeriodicTable};
+use std::collections::HashMap;
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -28,13 +28,14 @@ pub enum ChemParseError {
 #[derive(Parser)]
 #[grammar = "chem.pest"]
 pub struct ChemParser {
-    periodic_table: PeriodicTable
+    periodic_table: PeriodicTable,
 }
 
 impl ChemParser {
     pub fn new() -> Self {
         ChemParser {
-            periodic_table: PeriodicTable::from_csv("./data/elements.csv").expect("Failed to parse periodic table")
+            periodic_table: PeriodicTable::from_csv("./data/elements.csv")
+                .expect("Failed to parse periodic table"),
         }
     }
 
@@ -43,8 +44,9 @@ impl ChemParser {
     }
 
     pub fn parse_element(&self, element: &str) -> Result<&Element, ChemParseError> {
-        let mut element_parse = ChemParser::parse(Rule::element, element)
-            .map_err(|_| ChemParseError::ParsingError(String::from("element"), String::from(element)))?;
+        let mut element_parse = ChemParser::parse(Rule::element, element).map_err(|_| {
+            ChemParseError::ParsingError(String::from("element"), String::from(element))
+        })?;
 
         let element_symbol = element_parse.next().unwrap().as_str();
 
@@ -52,12 +54,13 @@ impl ChemParser {
             return Err(ChemParseError::InvalidElement(String::from(element_symbol)));
         }
 
-        Ok(self.get_table().get_element(&element_symbol).unwrap())
+        Ok(self.get_table().get_element(element_symbol).unwrap())
     }
 
     pub fn parse_formula(&self, formula: &str) -> Result<Formula, ChemParseError> {
-        let mut formula_parse = ChemParser::parse(Rule::formula, formula)
-            .map_err(|_| ChemParseError::ParsingError(String::from("formula"), String::from(formula)))?;
+        let mut formula_parse = ChemParser::parse(Rule::formula, formula).map_err(|_| {
+            ChemParseError::ParsingError(String::from("formula"), String::from(formula))
+        })?;
 
         let mut inside_pairs = formula_parse.next().unwrap();
 
@@ -65,19 +68,26 @@ impl ChemParser {
 
         self.process_pairs(&mut formula_struct.elements, &mut inside_pairs, 1)?;
 
-        formula_struct.mass = formula_struct.elements.iter().fold(0.0, |acc, (symbol, count)| {
-            let element = self.get_table().get_element(symbol).unwrap();
-            acc + (element.atomic_mass * *count as f64)
-        });
+        formula_struct.mass = formula_struct
+            .elements
+            .iter()
+            .fold(0.0, |acc, (symbol, count)| {
+                let element = self.get_table().get_element(symbol).unwrap();
+                acc + (element.atomic_mass * *count as f64)
+            });
 
         Ok(formula_struct)
     }
 
-    fn process_pairs(&self, elements: &mut HashMap<String, u8>, pairs: &mut Pair<Rule>, multiplier: u8) -> Result<(), ChemParseError> {
+    fn process_pairs(
+        &self,
+        elements: &mut HashMap<String, u8>,
+        pairs: &mut Pair<Rule>,
+        multiplier: u8,
+    ) -> Result<(), ChemParseError> {
         let mut prev_elem: Option<String> = None;
-        let mut pair_id: usize = 0;
 
-        for pair in pairs.clone().into_inner() {
+        for (pair_id, pair) in pairs.clone().into_inner().enumerate() {
             match pair.as_rule() {
                 Rule::element => {
                     let symbol = pair.as_str().to_string();
@@ -101,7 +111,7 @@ impl ChemParser {
                     let mut inner_pairs = pair.clone().into_inner().next().unwrap();
                     let mut group_multiplier = 1;
                     let pairs_vec: Vec<Pair<Rule>> = pairs.clone().into_inner().collect();
-                    if pairs_vec.len() > pair_id + 1{
+                    if pairs_vec.len() > pair_id + 1 {
                         let next_pair = &pairs_vec[pair_id + 1];
                         if next_pair.as_rule() == Rule::index {
                             group_multiplier = next_pair.as_str().parse::<u8>().unwrap();
@@ -111,8 +121,9 @@ impl ChemParser {
                 }
                 Rule::index => {
                     if prev_elem.is_some() {
-                        let index = pair.as_str().parse::<u8>()
-                            .map_err(|_| ChemParseError::InvalidIndexFormat(pair.as_str().to_string()))?;
+                        let index = pair.as_str().parse::<u8>().map_err(|_| {
+                            ChemParseError::InvalidIndexFormat(pair.as_str().to_string())
+                        })?;
                         let symbol = prev_elem.unwrap().clone();
                         *elements.entry(symbol).or_insert(0) += index * multiplier;
                     }
@@ -120,7 +131,6 @@ impl ChemParser {
                 }
                 _ => {}
             }
-            pair_id += 1;
         }
         if prev_elem.is_some() {
             let prev_symbol = prev_elem.unwrap().clone();
@@ -131,8 +141,9 @@ impl ChemParser {
     }
 
     pub fn parse_equation(&self, equation: &str) -> Result<Equation, ChemParseError> {
-        let mut equation_parse = ChemParser::parse(Rule::equation, equation)
-            .map_err(|_| ChemParseError::ParsingError(String::from("equation"), String::from(equation)))?;
+        let mut equation_parse = ChemParser::parse(Rule::equation, equation).map_err(|_| {
+            ChemParseError::ParsingError(String::from("equation"), String::from(equation))
+        })?;
 
         let mut reactants = HashMap::new();
         let mut products = HashMap::new();
@@ -146,17 +157,28 @@ impl ChemParser {
         self.process_side(&mut reactants, &mut reactants_formulas, &reactant_part)?;
         self.process_side(&mut products, &mut products_formulas, &product_part)?;
 
-        Ok(Equation::new(String::from(equation), reactants, products, reactants_formulas, products_formulas))
+        Ok(Equation::new(
+            String::from(equation),
+            reactants,
+            products,
+            reactants_formulas,
+            products_formulas,
+        ))
     }
 
-    fn process_side(&self, side: &mut HashMap<String, u8>,
-                    formulas: &mut HashMap<String, Formula>, side_part: &Pair<Rule>) -> Result<(), ChemParseError> {
+    fn process_side(
+        &self,
+        side: &mut HashMap<String, u8>,
+        formulas: &mut HashMap<String, Formula>,
+        side_part: &Pair<Rule>,
+    ) -> Result<(), ChemParseError> {
         let mut prev_coefficient = 1;
         for compound in side_part.clone().into_inner() {
             match compound.as_rule() {
                 Rule::coefficient => {
-                    let coefficient: u8 = compound.as_str().parse()
-                        .map_err(|_| ChemParseError::InvalidCoefficientFormat(compound.as_str().to_string()))?;
+                    let coefficient: u8 = compound.as_str().parse().map_err(|_| {
+                        ChemParseError::InvalidCoefficientFormat(compound.as_str().to_string())
+                    })?;
                     prev_coefficient = coefficient;
                 }
                 Rule::formula => {
@@ -178,3 +200,10 @@ impl ChemParser {
         self.periodic_table.get_element(element).is_some()
     }
 }
+
+impl Default for ChemParser {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+

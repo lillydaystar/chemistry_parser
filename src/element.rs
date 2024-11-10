@@ -17,7 +17,11 @@ pub struct Element {
 
 impl Display for Element {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{} ({})\nAtomic number: {}\nAtomic mass: {}", self.symbol, self.name, self.atomic_number, self.atomic_mass)
+        write!(
+            f,
+            "{} ({})\nAtomic number: {}\nAtomic mass: {}",
+            self.symbol, self.name, self.atomic_number, self.atomic_mass
+        )
     }
 }
 
@@ -40,7 +44,11 @@ impl Formula {
 
 impl Display for Formula {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{} \nMass: {}\nElements: {:?}", self.formula, self.mass, self.elements)
+        write!(
+            f,
+            "{} \nMass: {}\nElements: {:?}",
+            self.formula, self.mass, self.elements
+        )
     }
 }
 
@@ -55,13 +63,22 @@ pub struct Equation {
 
 impl Display for Equation {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "{} \nReactants: {:?}\nProducts: {:?}", self.equation, self.reactants, self.products)
+        write!(
+            f,
+            "{} \nReactants: {:?}\nProducts: {:?}",
+            self.equation, self.reactants, self.products
+        )
     }
 }
 
 impl Equation {
-    pub fn new(equation: String, reactants: HashMap<String, u8>, products: HashMap<String, u8>,
-               reactants_formulas: HashMap<String, Formula>, products_formulas: HashMap<String, Formula>) -> Self {
+    pub fn new(
+        equation: String,
+        reactants: HashMap<String, u8>,
+        products: HashMap<String, u8>,
+        reactants_formulas: HashMap<String, Formula>,
+        products_formulas: HashMap<String, Formula>,
+    ) -> Self {
         Equation {
             equation,
             reactants,
@@ -72,8 +89,16 @@ impl Equation {
     }
 
     pub fn check_equation(&self) -> bool {
-        let reactant_mass: f64 = self.reactants.iter().map(|(form, coefficient)| (*coefficient as f64) * self.reactants_formulas[form].mass).sum();
-        let product_mass: f64 = self.products.iter().map(|(form, coefficient)| (*coefficient as f64) * self.products_formulas[form].mass).sum();
+        let reactant_mass: f64 = self
+            .reactants
+            .iter()
+            .map(|(form, coefficient)| (*coefficient as f64) * self.reactants_formulas[form].mass)
+            .sum();
+        let product_mass: f64 = self
+            .products
+            .iter()
+            .map(|(form, coefficient)| (*coefficient as f64) * self.products_formulas[form].mass)
+            .sum();
 
         (reactant_mass - product_mass).abs() < 0.000001
     }

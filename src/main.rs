@@ -1,6 +1,6 @@
-use std::{env, fs};
+use chemistry_parser::ChemParser;
 use std::path::Path;
-use chemistry_parser::{ChemParser};
+use std::{env, fs};
 
 fn main() {
     let args: Vec<String> = env::args().collect();
@@ -46,11 +46,10 @@ fn main() {
                     println!("Equation before solving: \n{}", parsed_equation);
                     if parsed_equation.check_equation() {
                         println!("Equation is already balanced.")
-                    }
-                    else {
+                    } else {
                         println!("Solved equation: \n{}", parsed_equation.solve_equation());
                     }
-                },
+                }
                 Err(e) => eprintln!("Error: {}, try again", e),
             }
         }
@@ -81,7 +80,8 @@ fn print_help() {
 fn parse_file_equations(parser: &ChemParser, file_path: &str) -> anyhow::Result<(), String> {
     let path = Path::new(file_path);
 
-    let content = fs::read_to_string(path).map_err(|_| format!("Failed to read file: {}", file_path))?;
+    let content =
+        fs::read_to_string(path).map_err(|_| format!("Failed to read file: {}", file_path))?;
 
     for (i, line) in content.lines().enumerate() {
         match parser.parse_equation(line) {
@@ -89,11 +89,10 @@ fn parse_file_equations(parser: &ChemParser, file_path: &str) -> anyhow::Result<
                 println!("{}. {}", i + 1, parsed_equation);
                 if parsed_equation.check_equation() {
                     println!("Equation is already balanced.")
-                }
-                else {
+                } else {
                     println!("Solved equation: \n{}", parsed_equation.solve_equation());
                 }
-            },
+            }
             Err(e) => eprintln!("Error on line {}: {}", i + 1, e),
         }
     }
