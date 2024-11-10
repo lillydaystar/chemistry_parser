@@ -1,4 +1,4 @@
-Element Name,Symbol,Atomic Number,Atomic Mass,Density,Group,Melting Point (K),Boiling Point (K)
+name,symbol,atomic_number,atomic_mass,density,group,melting_point,boiling_point
 Hydrogen,H,1,1.008,8.2e-05,1,13.989999999999952,20.270999999999987
 Helium,He,2,4.002602,0.000164,18,,4.22199999999998
 Lithium,Li,3,6.94,0.534,1,453.65,1615.15
