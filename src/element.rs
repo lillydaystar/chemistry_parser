@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::error::Error;
+use std::fmt::Display;
 use std::fs::File;
 
 #[derive(Debug, Clone)]
@@ -12,6 +13,12 @@ pub struct Element {
     pub group: Option<u8>,
     pub melting_point: Option<f64>,
     pub boiling_point: Option<f64>,
+}
+
+impl Display for Element {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} ({})\nAtomic number: {}\nAtomic mass: {}", self.symbol, self.name, self.atomic_number, self.atomic_mass)
+    }
 }
 
 #[derive(Debug, Clone)]
@@ -31,6 +38,12 @@ impl Formula {
     }
 }
 
+impl Display for Formula {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} \nMass: {}\nElements: {:?}", self.formula, self.mass, self.elements)
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Equation {
     equation: String,
@@ -38,6 +51,12 @@ pub struct Equation {
     products: HashMap<String, u8>,
     reactants_formulas: HashMap<String, Formula>,
     products_formulas: HashMap<String, Formula>,
+}
+
+impl Display for Equation {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f, "{} \nReactants: {:?}\nProducts: {:?}", self.equation, self.reactants, self.products)
+    }
 }
 
 impl Equation {
@@ -56,11 +75,11 @@ impl Equation {
         let reactant_mass: f64 = self.reactants.iter().map(|(form, coefficient)| (*coefficient as f64) * self.reactants_formulas[form].mass).sum();
         let product_mass: f64 = self.products.iter().map(|(form, coefficient)| (*coefficient as f64) * self.products_formulas[form].mass).sum();
 
-        (reactant_mass - product_mass).abs() < f64::EPSILON
+        (reactant_mass - product_mass).abs() < 0.000001
     }
 
     pub fn solve_equation(self) -> Equation {
-        let mut result = self.clone();
+        let result = self.clone();
 
         if self.check_equation() {
             return result;
