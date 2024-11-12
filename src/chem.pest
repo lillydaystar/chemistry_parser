@@ -4,7 +4,7 @@
 element = { ASCII_ALPHA_UPPER ~ ASCII_ALPHA_LOWER? }
 
 /// `index` defines the index of an element in a formula.
-index = { ASCII_DIGIT+ }
+index = { ASCII_NONZERO_DIGIT ~ ASCII_DIGIT* }
 
 /// `formula` defines a chemical formula.
 /// A formula can consist of elements or groups of elements,
@@ -32,7 +32,7 @@ reactants = { coefficient? ~ formula ~ (WS? ~ "+" ~ WS? ~ coefficient? ~ formula
 products = { coefficient? ~ formula ~ (WS? ~ "+" ~ WS? ~ coefficient? ~ formula)* }
 
 /// `index` defines the coefficient that indicates the number of molecules of a formula.
-coefficient = { ASCII_DIGIT+ }
+coefficient = { ASCII_NONZERO_DIGIT ~ ASCII_DIGIT* }
 
 /// `WS` defines whitespace character.
 /// This character is used to separate parts of the equation but is ignored in parsing.
