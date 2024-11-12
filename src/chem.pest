@@ -1,12 +1,39 @@
+/// `element` defines a chemical element symbol.
+/// It consists of a single uppercase ASCII letter (for example, 'H', 'C')
+/// followed optionally by a single lowercase ASCII letter (for example, 'a' in 'Na').
 element = { ASCII_ALPHA_UPPER ~ ASCII_ALPHA_LOWER? }
+
+/// `index` defines the index of an element in a formula.
 index = { ASCII_DIGIT+ }
 
+/// `formula` defines a chemical formula.
+/// A formula can consist of elements or groups of elements,
+/// each optionally followed by an index.
+/// For example, H2O, (NH4)2SO4
 formula = { ((element ~ index?) | group ~ index?)+ }
+
+/// `group` defines a group of elements in a formula.
+/// A group is a part of the formula enclosed in brackets, containing a sub-formula inside.
+/// For example, (OH) or (NH4)
 group = { "(" ~ formula ~ ")" }
 
+/// `equation` defines a chemical equation.
+/// It consists of `reactants` (left side) and `products` (right side),
+/// separated by an arrow symbol (`->`).
+/// For example: H2 + O2 -> H2O
 equation = { reactants ~ WS? ~ "->" ~ WS? ~ products }
+
+/// `reactants` defines the reactant side of the equation.
+/// It includes one or more `formula` terms separated by the `+` symbol, each with an optional coefficient.
 reactants = { coefficient? ~ formula ~ (WS? ~ "+" ~ WS? ~ coefficient? ~ formula)* }
+
+/// `products` defines the product side of the equation.
+/// It includes one or more `formula` terms separated by the `+` symbol, each with an optional coefficient.
 products = { coefficient? ~ formula ~ (WS? ~ "+" ~ WS? ~ coefficient? ~ formula)* }
+
+/// `index` defines the coefficient that indicates the number of molecules of a formula.
 coefficient = { ASCII_DIGIT+ }
 
+/// `WS` defines whitespace character.
+/// This character is used to separate parts of the equation but is ignored in parsing.
 WS = _{ " " }
