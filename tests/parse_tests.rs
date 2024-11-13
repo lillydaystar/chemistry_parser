@@ -10,10 +10,11 @@ fn test_parse_element_valid() -> anyhow::Result<()> {
 }
 
 #[test]
-fn test_parse_element_invalid() {
+fn test_parse_element_invalid() -> anyhow::Result<()> {
     let parser = ChemParser::new();
     let result = parser.parse_element("Ha");
     assert!(matches!(result, Err(ChemParseError::InvalidElement(_))));
+    Ok(())
 }
 
 #[test]
@@ -39,10 +40,11 @@ fn test_parse_formula_with_groups() -> anyhow::Result<()> {
 }
 
 #[test]
-fn test_parse_formula_invalid_element() {
+fn test_parse_formula_invalid_element() -> anyhow::Result<()> {
     let parser = ChemParser::new();
     let result = parser.parse_formula("Yx2");
     assert!(matches!(result, Err(ChemParseError::InvalidElement(_))));
+    Ok(())
 }
 
 #[test]
