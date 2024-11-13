@@ -206,4 +206,3 @@ impl Default for ChemParser {
         Self::new()
     }
 }
-

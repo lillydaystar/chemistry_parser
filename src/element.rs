@@ -103,17 +103,6 @@ impl Equation {
 
         (reactant_mass - product_mass).abs() < 0.000001
     }
-
-    pub fn solve_equation(self) -> Equation {
-        let result = self.clone();
-
-        if self.check_equation() {
-            return result;
-        }
-        // TODO: Define algorithm for solving chemical equations
-
-        result
-    }
 }
 
 pub struct PeriodicTable {
