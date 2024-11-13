@@ -25,7 +25,7 @@ The parser processes chemical elements, formulas and equations in the following 
    - `Equation`: parsed equation with its reactants and products.
 
 The parsing process is described in the diagram below:
-![Diagram with the parsing process](data/diagram.png)
+![parsing process diagram](https://github.com/lillydaystar/chemistry_parser/blob/main/data/diagram.png?raw=true)
 
 ### Example
 
