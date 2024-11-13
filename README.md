@@ -1,5 +1,8 @@
 # Chemistry parser
 
+Link: https://crates.io/crates/chemistry_parser
+Docs: https://docs.rs/chemistry_parser/0.1.0/chemistry_parser/
+
 A parser for the analysis of chemical elements, formulas and equations. This parser is designed to automate the processing of chemical formulas and equations, providing structured information about each element in the formula, as well as the ability to recognize and check the correctness of chemical equations.
 
 ## Features
