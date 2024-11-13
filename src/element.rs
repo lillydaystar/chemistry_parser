@@ -55,9 +55,9 @@ impl Display for Formula {
 
 #[derive(Debug, Clone)]
 pub struct Equation {
-    equation: String,
-    reactants: HashMap<String, u8>,
-    products: HashMap<String, u8>,
+    pub equation: String,
+    pub reactants: HashMap<String, u8>,
+    pub products: HashMap<String, u8>,
     reactants_formulas: HashMap<String, Formula>,
     products_formulas: HashMap<String, Formula>,
 }
