@@ -84,9 +84,13 @@ fn print_help() {
     println!("  credits                         Show credits");
     println!("  symbol <element-symbol>         Parse the element and print information about it");
     println!("  formula <chemical-formula>      Parse the formula and print information about it");
-    println!("  equation <chemical-equation>    Parse the chemical equation and print its formulas");
+    println!(
+        "  equation <chemical-equation>    Parse the chemical equation and print its formulas"
+    );
     println!("  check <chemical-equation>       Check if the chemical equation is balanced");
-    println!("  file <file-path>                Parse the file with chemical equations and solve them");
+    println!(
+        "  file <file-path>                Parse the file with chemical equations and solve them"
+    );
 }
 
 fn parse_file_equations(parser: &ChemParser, file_path: &str) -> anyhow::Result<(), String> {
