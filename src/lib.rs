@@ -1,3 +1,23 @@
+//! # Chemistry Parsing Library
+//!
+//! This library provides tools to parse and work with chemical elements, formulas, and equations.
+//!
+//! ## Example Usage
+//! # Simple pest parse
+//! ```rust
+//! use pest::Parser;
+//! use chemistry_parser::{ChemParser, Rule};
+//!
+//! let chemical_equation = ChemParser::parse(Rule::equation, "2H2 + O2 -> 2H2O").unwrap();
+//! ```
+//! # Parse to Rust struct
+//! ```rust
+//! use chemistry_parser::ChemParser;
+//!
+//! let parser = ChemParser::new();
+//! let equation_struct = parser.parse_equation("2H2 + O2 -> 2H2O").unwrap();
+//! println!("{}", equation_struct);
+//! ```
 pub mod element;
 
 use crate::element::{Element, Equation, Formula, PeriodicTable};
@@ -7,6 +27,7 @@ use pest_derive::Parser;
 use std::collections::HashMap;
 use thiserror::Error;
 
+/// Represents possible errors in chemical parsing.
 #[derive(Debug, Error)]
 pub enum ChemParseError {
     #[error("Invalid element symbol: {0}")]
@@ -25,6 +46,7 @@ pub enum ChemParseError {
     InvalidCoefficientFormat(String),
 }
 
+/// Parser for chemical elements, formulas, and equations.
 #[derive(Parser)]
 #[grammar = "chem.pest"]
 pub struct ChemParser {
@@ -32,6 +54,7 @@ pub struct ChemParser {
 }
 
 impl ChemParser {
+    /// Creates a new ChemParser instance and loads elements from a CSV file.
     pub fn new() -> Self {
         ChemParser {
             periodic_table: PeriodicTable::from_csv("./data/elements.csv")
@@ -39,10 +62,12 @@ impl ChemParser {
         }
     }
 
+    /// Returns a reference to the PeriodicTable.
     pub fn get_table(&self) -> &PeriodicTable {
         &self.periodic_table
     }
 
+    /// Parses and validates an element symbol.
     pub fn parse_element(&self, element: &str) -> Result<&Element, ChemParseError> {
         let mut element_parse = ChemParser::parse(Rule::element, element).map_err(|_| {
             ChemParseError::ParsingError(String::from("element"), String::from(element))
@@ -57,6 +82,7 @@ impl ChemParser {
         Ok(self.get_table().get_element(element_symbol).unwrap())
     }
 
+    /// Parses and validates a chemical formula string.
     pub fn parse_formula(&self, formula: &str) -> Result<Formula, ChemParseError> {
         let mut formula_parse = ChemParser::parse(Rule::formula, formula).map_err(|_| {
             ChemParseError::ParsingError(String::from("formula"), String::from(formula))
@@ -140,6 +166,7 @@ impl ChemParser {
         Ok(())
     }
 
+    /// Parses and validates a chemical equation string.
     pub fn parse_equation(&self, equation: &str) -> Result<Equation, ChemParseError> {
         let mut equation_parse = ChemParser::parse(Rule::equation, equation).map_err(|_| {
             ChemParseError::ParsingError(String::from("equation"), String::from(equation))

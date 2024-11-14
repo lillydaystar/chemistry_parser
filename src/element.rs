@@ -1,9 +1,14 @@
+//! # Chemical units Module
+//!
+//! This module defines structs that represent chemical elements, formulas, and equations
+
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
 use std::error::Error;
 use std::fmt::Display;
 
+/// Represents a chemical element with its properties from periodic table.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Element {
     pub name: String,
@@ -26,6 +31,7 @@ impl Display for Element {
     }
 }
 
+/// Represents a chemical formula with its elements with corresponding indices, and molecular mass.
 #[derive(Debug, Clone)]
 pub struct Formula {
     pub formula: String,
@@ -53,6 +59,7 @@ impl Display for Formula {
     }
 }
 
+/// Represents a chemical equation with its reactants and products.
 #[derive(Debug, Clone)]
 pub struct Equation {
     pub equation: String,
@@ -89,6 +96,7 @@ impl Equation {
         }
     }
 
+    /// Checks if the equation is balanced by comparing the total mass of reactants and products.
     pub fn check_equation(&self) -> bool {
         let reactant_mass: f64 = self
             .reactants
@@ -105,11 +113,13 @@ impl Equation {
     }
 }
 
+/// Represents a collection of chemical elements from periodic table.
 pub struct PeriodicTable {
     elements: HashMap<String, Element>,
 }
 
 impl PeriodicTable {
+    /// Loads elements from a CSV file and creates a `PeriodicTable` instance.
     pub fn from_csv(path: &str) -> Result<Self, Box<dyn Error>> {
         let mut elements = HashMap::new();
         let mut rdr = csv::ReaderBuilder::new()
@@ -124,6 +134,7 @@ impl PeriodicTable {
         Ok(PeriodicTable { elements })
     }
 
+    /// Retrieves an element by its symbol.
     pub fn get_element(&self, symbol: &str) -> Option<&Element> {
         self.elements.get(symbol)
     }

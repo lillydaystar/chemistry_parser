@@ -1,3 +1,5 @@
+//! Grammar rules for parsing chemical elements, formulas and equations
+
 /// `element` defines a chemical element symbol.
 /// It consists of a single uppercase ASCII letter (for example, 'H', 'C')
 /// followed optionally by a single lowercase ASCII letter (for example, 'a' in 'Na').
