@@ -1,6 +1,6 @@
 [package]
 name = "chemistry_parser"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 license = "MIT"
 description = "A parser for the analysis of chemical elements, formulas and equations."
