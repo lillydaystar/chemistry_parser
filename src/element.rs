@@ -11,13 +11,21 @@ use std::fmt::Display;
 /// Represents a chemical element with its properties from periodic table.
 #[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct Element {
+    /// Full name of the chemical element
     pub name: String,
+    /// Symbol of the element
     pub symbol: String,
+    /// Atomic number of the element from periodic table
     pub atomic_number: u8,
+    /// Atomic mass of the element from periodic table
     pub atomic_mass: f64,
+    /// Density of the element.
     pub density: f64,
+    /// Optional group number of the element in the periodic table.
     pub group: Option<u8>,
+    /// Optional melting point of the element.
     pub melting_point: Option<Value>,
+    /// Optional boiling point of the element.
     pub boiling_point: Option<Value>,
 }
 
@@ -34,12 +42,16 @@ impl Display for Element {
 /// Represents a chemical formula with its elements with corresponding indices, and molecular mass.
 #[derive(Debug, Clone)]
 pub struct Formula {
+    /// String representation of the formula.
     pub formula: String,
+    /// Map of element symbols to their counts.
     pub elements: HashMap<String, u8>,
+    /// Molecular mass of the formula.
     pub mass: f64,
 }
 
 impl Formula {
+    /// Creates a new Formula instance with the specified formula string.
     pub fn new(formula_str: &str) -> Self {
         Formula {
             formula: formula_str.to_string(),
@@ -62,10 +74,15 @@ impl Display for Formula {
 /// Represents a chemical equation with its reactants and products.
 #[derive(Debug, Clone)]
 pub struct Equation {
+    /// String representation of the equation.
     pub equation: String,
+    /// Map of reactants and their coefficients.
     pub reactants: HashMap<String, u8>,
+    /// Map of products and their coefficients.
     pub products: HashMap<String, u8>,
+    /// Map of reactant formulas and their Formula structures.
     reactants_formulas: HashMap<String, Formula>,
+    /// Map of product formulas and their Formula structures.
     products_formulas: HashMap<String, Formula>,
 }
 
@@ -80,6 +97,7 @@ impl Display for Equation {
 }
 
 impl Equation {
+    /// Creates a new Equation instance with reactants, products, and their formulas.
     pub fn new(
         equation: String,
         reactants: HashMap<String, u8>,
