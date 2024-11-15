@@ -3,14 +3,14 @@
 //! This library provides tools to parse and work with chemical elements, formulas, and equations.
 //!
 //! ## Example Usage
-//! # Simple pest parse
+//! ### Simple pest parse
 //! ```rust
 //! use pest::Parser;
 //! use chemistry_parser::{ChemParser, Rule};
 //!
 //! let chemical_equation = ChemParser::parse(Rule::equation, "2H2 + O2 -> 2H2O").unwrap();
 //! ```
-//! # Parse to Rust struct
+//! ### Parse to Rust struct
 //! ```rust
 //! use chemistry_parser::ChemParser;
 //!
@@ -30,18 +30,23 @@ use thiserror::Error;
 /// Represents possible errors in chemical parsing.
 #[derive(Debug, Error)]
 pub enum ChemParseError {
+    /// Custom Error for cases, when the parsed element symbol is not in the periodic table
     #[error("Invalid element symbol: {0}")]
     InvalidElement(String),
 
-    #[error("Invalid chemical formula: {0}")]
-    InvalidFormula(String),
+    /// Custom Error for cases, when the parsed formula contains element symbol that is not in the periodic table
+    #[error("Invalid chemical formula \"{0}\" with invalid element symbol {1}")]
+    InvalidFormula(String, String),
 
+    /// Custom Error for unsuccessful parsing cases
     #[error("Failed to parse {0}: {1}")]
     ParsingError(String, String),
 
+    /// Custom Error for invalid index format in formula
     #[error("Invalid index format: {0}")]
     InvalidIndexFormat(String),
 
+    /// Custom Error for invalid coefficient format in equation
     #[error("Invalid coefficient format: {0}")]
     InvalidCoefficientFormat(String),
 }
@@ -92,7 +97,12 @@ impl ChemParser {
 
         let mut formula_struct = Formula::new(inside_pairs.as_str());
 
-        self.process_pairs(&mut formula_struct.elements, &mut inside_pairs, 1)?;
+        self.process_pairs(
+            &formula_struct.formula,
+            &mut formula_struct.elements,
+            &mut inside_pairs,
+            1,
+        )?;
 
         formula_struct.mass = formula_struct
             .elements
@@ -107,6 +117,7 @@ impl ChemParser {
 
     fn process_pairs(
         &self,
+        formula_name: &str,
         elements: &mut HashMap<String, u8>,
         pairs: &mut Pair<Rule>,
         multiplier: u8,
@@ -119,7 +130,10 @@ impl ChemParser {
                     let symbol = pair.as_str().to_string();
 
                     if !self.validate_element(&symbol) {
-                        return Err(ChemParseError::InvalidElement(symbol));
+                        return Err(ChemParseError::InvalidFormula(
+                            String::from(formula_name),
+                            symbol,
+                        ));
                     }
 
                     if prev_elem.is_some() {
@@ -143,7 +157,12 @@ impl ChemParser {
                             group_multiplier = next_pair.as_str().parse::<u8>().unwrap();
                         }
                     }
-                    self.process_pairs(elements, &mut inner_pairs, multiplier * group_multiplier)?;
+                    self.process_pairs(
+                        formula_name,
+                        elements,
+                        &mut inner_pairs,
+                        multiplier * group_multiplier,
+                    )?;
                 }
                 Rule::index => {
                     if prev_elem.is_some() {

@@ -43,7 +43,7 @@ fn test_parse_formula_with_groups() -> anyhow::Result<()> {
 fn test_parse_formula_invalid_element() -> anyhow::Result<()> {
     let parser = ChemParser::new();
     let result = parser.parse_formula("Yx2");
-    assert!(matches!(result, Err(ChemParseError::InvalidElement(_))));
+    assert!(matches!(result, Err(ChemParseError::InvalidFormula(_, _))));
     Ok(())
 }
 
